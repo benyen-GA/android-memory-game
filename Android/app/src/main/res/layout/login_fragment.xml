@@ -45,6 +45,13 @@
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:layout_marginTop="15dp"/>
+            <!--Lewis: Added temp "TEST" button to test Fragment Logic-->
+            <Button
+                android:id="@+id/testButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TEST"
+                android:layout_marginTop="10dp" />
 
 
         </LinearLayout>

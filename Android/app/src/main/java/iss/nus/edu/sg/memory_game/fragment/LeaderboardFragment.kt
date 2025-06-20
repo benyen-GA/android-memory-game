@@ -9,26 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import iss.nus.edu.sg.memory_game.R
 
-class LoginFragment : Fragment() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        // No ViewModel needed for now
-    }
+class LeaderboardFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.login_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_leaderboard, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val btn = view.findViewById<Button>(R.id.btnToFetch)
-        btn?.setOnClickListener {
-            view.findNavController().navigate(R.id.action_login_to_fetch)
+        view.findViewById<Button>(R.id.btnBackToFetch).setOnClickListener {
+            view.findNavController().navigate(R.id.action_leaderboard_to_fetch)
         }
     }
 }

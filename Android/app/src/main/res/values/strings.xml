@@ -2,4 +2,6 @@
     <string name="app_name">Flip Match</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="matchCounter">3/10 matches</string>
+    <string name="timer">00:03:45</string>
 </resources>

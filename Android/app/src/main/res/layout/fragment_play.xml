@@ -1,20 +1,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="24dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play Screen Placeholder"
-        android:textSize="20sp" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
 
+        <TextView
+            android:id="@+id/matchCounter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="start"
+            android:text="@string/matchCounter"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+        
+        <TextView
+            android:id="@+id/timer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="@string/timer"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <GridLayout
+        android:id="@+id/cardGrid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:columnCount="3"
+        android:rowCount="4"
+        android:padding="5dp"/>
+
+    <ImageView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:visibility="visible"
+        android:layout_marginTop="10dp"/>
+
+<!--   Lst: this button will remove later-->
     <Button
         android:id="@+id/btnToLeaderboard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Go to Leaderboard"
-        android:layout_marginTop="16dp" />
+        android:text="Go to Leaderboard" />
 </LinearLayout>

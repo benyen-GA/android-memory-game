@@ -4,4 +4,4 @@ data class TempUser(
     val username: String,
     val password: String,
     val isPaidUser: Boolean
-) {}
+)

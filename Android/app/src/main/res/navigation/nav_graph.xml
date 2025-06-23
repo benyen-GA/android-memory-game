@@ -11,10 +11,6 @@
         <action
             android:id="@+id/action_login_to_fetch"
             app:destination="@id/fetchFragment" />
-        <!-- added flag to be passed down to fetchFrag-->
-        <argument
-            android:name="isPaidUser"
-            app:argType="boolean"/>
     </fragment>
 
     <fragment

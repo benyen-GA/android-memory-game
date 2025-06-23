@@ -12,22 +12,24 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="#5E651FFF">
+>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
             android:background="@color/white"
+            android:elevation="10dp"
+            android:gravity="center"
+            android:orientation="vertical"
             android:padding="30dp">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="20dp"
                 android:text="Login"
                 android:textSize="30sp"
-                android:textStyle="bold"
-                android:layout_margin="20dp"/>
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/username"

@@ -28,31 +28,28 @@
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:layout_margin="20dp"/>
-            <EditText
-                android:layout_margin="20dp"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:hint="Username"
-                />
-            <EditText
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:layout_marginBottom="20dp"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Login"
-                android:layout_marginTop="15dp"/>
-            <!--Lewis: Added temp "TEST" button to test Fragment Logic-->
-            <Button
-                android:id="@+id/testButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TEST"
-                android:layout_marginTop="10dp" />
 
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:hint="Username" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:hint="Password"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Login" />
 
         </LinearLayout>
 

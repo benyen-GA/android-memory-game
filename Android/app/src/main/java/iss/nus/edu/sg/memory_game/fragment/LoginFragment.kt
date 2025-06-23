@@ -11,6 +11,7 @@ import iss.nus.edu.sg.memory_game.R
 
 class LoginFragment : Fragment() {
 
+
     companion object {
         fun newInstance() = LoginFragment()
     }
@@ -31,8 +32,8 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val testButton = view.findViewById<Button>(R.id.loginButton)
-        testButton?.setOnClickListener {
+        val loginButton = view.findViewById<Button>(R.id.loginButton)
+        loginButton?.setOnClickListener {
             view.findNavController().navigate(R.id.action_login_to_fetch)
         }
     }

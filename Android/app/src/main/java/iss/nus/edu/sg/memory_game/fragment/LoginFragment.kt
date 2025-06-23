@@ -10,6 +10,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import iss.nus.edu.sg.memory_game.R
 import iss.nus.edu.sg.memory_game.dao.TempUserDAO
 
@@ -23,8 +24,12 @@ class LoginFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // TODO: Use the ViewModel (can be initialized here later if needed)
+    //login check here to immediately redirect to fetch fragment once checked that user is not logged in
+        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val isLoggedIn = loginPrefs.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            NavHostFragment.findNavController(this).navigate(R.id.action_login_to_fetch)
+        }
     }
 
     override fun onCreateView(
@@ -40,18 +45,15 @@ class LoginFragment : Fragment() {
         val loginButton = view.findViewById<Button>(R.id.loginButton)
         val username = view.findViewById<EditText>(R.id.username)
         val password = view.findViewById<EditText>(R.id.password)
+        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
 
 
         loginButton?.setOnClickListener {
             val user = TempUserDAO.authenticate(username.text.toString(), password.text.toString())
             if (user != null) {
-                //setting getSharedPreferences key = "auth", boolean flag isLoggedIn to true
-                //if user credentials are valid with existing user
-
-                //putting
-                val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
+                // getSharedPreferences key = "auth", boolean flag isLoggedIn to true if user credentials are valid with existing user
                 with (loginPrefs.edit()) {
-                    putBoolean("IsLoggedIn", true)
+                    putBoolean("isLoggedIn", true)
                     putBoolean("isPaidUser", user.isPaidUser)
 
                     //storing username as well, if user is required as unique id in later fragments
@@ -65,7 +67,7 @@ class LoginFragment : Fragment() {
                 Toast.makeText(context, "Invalid login credentials", Toast.LENGTH_SHORT).show()
             }
 
-            
+
         }
     }
 }

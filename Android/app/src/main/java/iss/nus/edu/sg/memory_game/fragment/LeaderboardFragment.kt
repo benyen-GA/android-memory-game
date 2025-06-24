@@ -16,7 +16,7 @@ class LeaderboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<Button>(R.id.btnBackToFetch)?.setOnClickListener {
+        view.findViewById<Button>(R.id.closeButton)?.setOnClickListener {
             view.findNavController().navigate(R.id.action_leaderboard_to_fetch)
         }
     }

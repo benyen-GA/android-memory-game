@@ -1,30 +1,36 @@
 {
   "format": 1,
   "restore": {
-    "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj": {}
+    "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj": {}
   },
   "projects": {
-    "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj": {
+    "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
-        "projectName": "ASP.NET",
-        "projectPath": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
-        "packagesPath": "/Users/dionis/.nuget/packages/",
-        "outputPath": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/obj/",
+        "projectUniqueName": "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj",
+        "projectName": "MemoryGameBackend",
+        "projectPath": "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj",
+        "packagesPath": "C:\\Users\\prisc\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/dionis/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\prisc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net8.0"
+          "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net8.0": {
-            "targetAlias": "net8.0",
+          "net9.0": {
+            "targetAlias": "net9.0",
             "projectReferences": {}
           }
         },
@@ -37,11 +43,18 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.300"
       },
       "frameworks": {
-        "net8.0": {
-          "targetAlias": "net8.0",
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[9.0.6, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -61,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.411/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

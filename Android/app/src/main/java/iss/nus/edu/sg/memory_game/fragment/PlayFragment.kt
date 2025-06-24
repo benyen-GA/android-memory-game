@@ -66,5 +66,7 @@ class PlayFragment : Fragment() {
         view.findViewById<Button>(R.id.btnToLeaderboard)?.setOnClickListener {
             view.findNavController().navigate(R.id.action_play_to_leaderboard)
         }
+
+        childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
     }
 }

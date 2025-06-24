@@ -31,10 +31,8 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Lewis- Magic Code for TEST button to navigate to the Fetch Fragment Screen.
-        val testButton = view.findViewById<Button>(R.id.testButton)
+        val testButton = view.findViewById<Button>(R.id.loginButton)
         testButton?.setOnClickListener {
-            // Lewis - go to FetchFragment when TEST is clicked
             view.findNavController().navigate(R.id.action_login_to_fetch)
         }
     }

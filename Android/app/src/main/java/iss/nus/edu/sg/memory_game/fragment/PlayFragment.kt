@@ -10,7 +10,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,7 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import iss.nus.edu.sg.memory_game.R
 import java.io.File
-import java.io.FileOutputStream
 
 class PlayFragment : Fragment() {
     private lateinit var cardGrid: GridLayout

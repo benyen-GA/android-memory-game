@@ -1,5 +1,6 @@
 package iss.nus.edu.sg.memory_game.fragment
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
@@ -9,7 +10,6 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import iss.nus.edu.sg.memory_game.R
 import java.io.File
-import java.io.FileOutputStream
 
 class PlayFragment : Fragment() {
     private lateinit var cardGrid: GridLayout
@@ -57,12 +56,11 @@ class PlayFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val isPaidUser = loginPrefs.getBoolean("isPaidUser", false)
+
         matchCounter = view.findViewById(R.id.matchCounter)
         timer = view.findViewById(R.id.timer)
-
-        view.findViewById<Button>(R.id.btnToLeaderboard)?.setOnClickListener {
-            view.findNavController().navigate(R.id.action_play_to_leaderboard)
-        }
 
         imagePathList = getImagePaths()
 
@@ -73,7 +71,11 @@ class PlayFragment : Fragment() {
 
         showCardBacks()
 
-        childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
+        if (!isPaidUser) {
+            childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
+        } else {
+            view.findViewById<View>(R.id.adView)?.visibility = View.INVISIBLE
+        }
     }
 
     private fun showCardBacks(){

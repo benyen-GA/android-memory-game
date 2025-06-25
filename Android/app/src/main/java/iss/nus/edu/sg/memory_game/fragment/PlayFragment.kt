@@ -1,8 +1,10 @@
 package iss.nus.edu.sg.memory_game.fragment
 
+import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -25,7 +27,7 @@ class PlayFragment : Fragment() {
     private lateinit var imagePathList: List<String>
     private lateinit var matchCounter: TextView
     private lateinit var timer: TextView
-
+    private lateinit var bestTime: TextView
 
     private var imageList: List<String> = listOf()
     private var firstCard: ImageView? = null
@@ -46,6 +48,8 @@ class PlayFragment : Fragment() {
             }
         }
     }
+    private var mediaPlayer: MediaPlayer?=null
+    private var bgmPlayer: MediaPlayer? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -63,6 +67,9 @@ class PlayFragment : Fragment() {
         view.findViewById<Button>(R.id.btnToLeaderboard)?.setOnClickListener {
             view.findNavController().navigate(R.id.action_play_to_leaderboard)
         }
+        bestTime = view.findViewById(R.id.bestTimeTextView)
+        loadBestTime()
+        startBGM()
 
         imagePathList = getImagePaths()
 
@@ -95,6 +102,7 @@ class PlayFragment : Fragment() {
                     columnSpec = GridLayout.spec(i % columns, 1f)
                     setMargins(5,5,5,5)
                 }
+                dealcard(this,i)
                 setOnClickListener {
                     if (!gameStarted){
                         gameStarted = true
@@ -102,8 +110,10 @@ class PlayFragment : Fragment() {
                     }
 
                     if (isFlipping || this.tag == "matched" || this == firstCard) {
+                        playSoundEffect(false)
                         return@setOnClickListener
                     }
+                    playSoundEffect(true)
 
                     val bitmap = BitmapFactory.decodeFile(imgPath)
                     setImageBitmap(bitmap)
@@ -150,8 +160,14 @@ class PlayFragment : Fragment() {
                 secondCard?.tag = "matched"
                 matchedCount ++
                 updateMatchCounter()
-                firstCard?.let { markedAsMatched(it) }
-                secondCard?.let { markedAsMatched(it) }
+                firstCard?.let {
+                    markedAsMatched(it)
+                    playMatchAnimation(it)
+                }
+                secondCard?.let {
+                    markedAsMatched(it)
+                    playMatchAnimation(it)
+                }
 
                 firstCard = null
                 secondCard = null
@@ -161,11 +177,14 @@ class PlayFragment : Fragment() {
                 if (matchedCount == 6){
                     stopTimer()
                     Toast.makeText(context,"All matched! Congratulation!",Toast.LENGTH_SHORT).show()
+                    playMusic(R.raw.win)
+                    saveBestTimeIfNeeded(seconds)
                     cardGrid.postDelayed({
                         view?.findNavController()?.navigate(R.id.action_play_to_leaderboard)
                     }, 1000)
                 }
             } else {
+                playMusic(R.raw.flip_back)
                 cardGrid.postDelayed({
                     firstCard?.setImageResource(R.drawable.card_back)
                     secondCard?.setImageResource(R.drawable.card_back)
@@ -178,6 +197,28 @@ class PlayFragment : Fragment() {
         }
     }
 
+    private fun loadBestTime() {
+        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val best = sharedPref.getInt("BEST_TIME", Int.MAX_VALUE)
+        if (best != Int.MAX_VALUE) {
+            bestTime.text = "Best Time: ${formatTime(best)}"
+        }
+    }
+
+    private fun saveBestTimeIfNeeded(current: Int) {
+        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val best = sharedPref.getInt("BEST_TIME", Int.MAX_VALUE)
+        if (current < best) {
+            sharedPref.edit().putInt("BEST_TIME", current).apply()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopMusic()
+        startBGM()
+    }
+
     private fun markedAsMatched(imageView: ImageView) {
         imageView.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
         imageView.animate()
@@ -185,17 +226,66 @@ class PlayFragment : Fragment() {
             .setDuration(450)
             .start()
     }
+    private fun dealcard(imageView: ImageView,index:Int){
+        imageView.alpha=0f
+        imageView.animate()
+            .alpha(1f)
+            .setStartDelay((index * 100).toLong())
+            .setDuration(300)
+            .start()
+    }
+    private fun playSoundEffect(flip:Boolean){
+        val soundId = if (flip) R.raw.flip else R.raw.error
+        playMusic(soundId)
+    }
+    private fun playMatchAnimation(imageView: ImageView){
+        imageView.animate()
+            .scaleX(1.2f).scaleY(1.2f)
+            .setDuration(100)
+            .withEndAction {
+                imageView.animate()
+                    .scaleX(1f).scaleY(1f)
+                    .setDuration(100)
+                    .start()
+            }
+        playMusic(R.raw.match_music)
+    }
+
+    private fun startBGM() {
+        if (bgmPlayer == null) {
+            bgmPlayer = MediaPlayer.create(requireContext(), R.raw.bgm)
+            bgmPlayer?.isLooping = true
+            bgmPlayer?.start()
+        }
+    }
+    private fun stopBGM() {
+        bgmPlayer?.stop()
+        bgmPlayer?.release()
+        bgmPlayer = null
+    }
+    private fun playMusic(index:Int){
+        mediaPlayer?.release()
+        mediaPlayer= MediaPlayer.create(requireContext(),index).apply{
+                setOnCompletionListener { release() }
+            start()
+        }
+    }
 
     private fun updateMatchCounter(){
         matchCounter.text = "$matchedCount / 6 matches"
     }
-
-    private fun updateTimerText(seconds: Int){
+    private fun formatTime(seconds: Int): String {
         val hours = seconds / 3600
         val minutes = (seconds % 3600) / 60
-        val second = seconds % 60
-        val timerFormat = String.format("%02d:%02d:%02d", hours, minutes, second)
-
+        val secs = seconds % 60
+        return if (hours > 0) {
+            String.format("%02d:%02d:%02d", hours, minutes, secs)
+        } else {
+            String.format("%02d:%02d", minutes, secs)
+        }
+    }
+    private fun updateTimerText(seconds: Int){
+        var timerFormat = formatTime(seconds)
         timer.text = "$timerFormat"
     }
 
@@ -211,4 +301,9 @@ class PlayFragment : Fragment() {
         handler.removeCallbacks(runTimer)
     }
 
+    private fun stopMusic() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
 }

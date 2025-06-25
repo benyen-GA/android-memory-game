@@ -117,23 +117,8 @@ class PlayFragment : Fragment() {
 
     private fun getImagePaths(): List<String> {
         val context = requireContext()
-        val downloadedImg = listOf(
-            R.drawable.card_1_test,
-            R.drawable.card_2_test,
-            R.drawable.card_3_test,
-            R.drawable.card_4_test,
-            R.drawable.card_5_test,
-            R.drawable.card_6_test
-        )
-
-        return downloadedImg.mapIndexed { index, i ->
-            val inputStream = context.resources.openRawResource(i)
-            val file = File(context.cacheDir, "img_$index.jpg")
-            val outputStream = FileOutputStream(file)
-            inputStream.copyTo(outputStream)
-            inputStream.close()
-            outputStream.close()
-            file.absolutePath
+        return (1..6).map { index ->
+            File(context.cacheDir, "image_$index.jpg").absolutePath
         }
     }
 

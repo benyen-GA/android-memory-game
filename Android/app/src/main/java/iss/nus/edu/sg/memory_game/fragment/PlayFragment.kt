@@ -4,12 +4,14 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,13 +20,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import iss.nus.edu.sg.memory_game.R
 import java.io.File
+import java.io.FileOutputStream
 
 class PlayFragment : Fragment() {
     private lateinit var cardGrid: GridLayout
     private lateinit var imagePathList: List<String>
     private lateinit var matchCounter: TextView
     private lateinit var timer: TextView
-
+    private lateinit var bestTime: TextView
 
     private var imageList: List<String> = listOf()
     private var firstCard: ImageView? = null
@@ -45,6 +48,8 @@ class PlayFragment : Fragment() {
             }
         }
     }
+    private var mediaPlayer: MediaPlayer?=null
+    private var bgmPlayer: MediaPlayer? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -56,11 +61,12 @@ class PlayFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
-        val isPaidUser = loginPrefs.getBoolean("isPaidUser", false)
-
         matchCounter = view.findViewById(R.id.matchCounter)
         timer = view.findViewById(R.id.timer)
+
+        bestTime = view.findViewById(R.id.bestTimeTextView)
+        loadBestTime()
+        startBGM()
 
         imagePathList = getImagePaths()
 
@@ -71,11 +77,7 @@ class PlayFragment : Fragment() {
 
         showCardBacks()
 
-        if (!isPaidUser) {
-            childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
-        } else {
-            view.findViewById<View>(R.id.adView)?.visibility = View.INVISIBLE
-        }
+        childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
     }
 
     private fun showCardBacks(){
@@ -95,8 +97,9 @@ class PlayFragment : Fragment() {
                     height = 0
                     rowSpec = GridLayout.spec(i / columns, 1f)
                     columnSpec = GridLayout.spec(i % columns, 1f)
-                    setMargins(5,5,5,5)
+                    setMargins(8,8,8,8)
                 }
+                dealcard(this,i)
                 setOnClickListener {
                     if (!gameStarted){
                         gameStarted = true
@@ -104,11 +107,11 @@ class PlayFragment : Fragment() {
                     }
 
                     if (isFlipping || this.tag == "matched" || this == firstCard) {
+                        playSoundEffect(false)
                         return@setOnClickListener
                     }
-
-                    val bitmap = BitmapFactory.decodeFile(imgPath)
-                    setImageBitmap(bitmap)
+                    playSoundEffect(true)
+                    flipcard(this, showFront = true, frontImgPath = imgPath)
 
                     flipLogic(this, imgPath)
                 }
@@ -137,8 +140,14 @@ class PlayFragment : Fragment() {
                 secondCard?.tag = "matched"
                 matchedCount ++
                 updateMatchCounter()
-                firstCard?.let { markedAsMatched(it) }
-                secondCard?.let { markedAsMatched(it) }
+                firstCard?.let {
+                    markedAsMatched(it)
+                    playMatchAnimation(it)
+                }
+                secondCard?.let {
+                    markedAsMatched(it)
+                    playMatchAnimation(it)
+                }
 
                 firstCard = null
                 secondCard = null
@@ -148,14 +157,17 @@ class PlayFragment : Fragment() {
                 if (matchedCount == 6){
                     stopTimer()
                     Toast.makeText(context,"All matched! Congratulation!",Toast.LENGTH_SHORT).show()
+                    playMusic(R.raw.win)
+                    saveBestTimeIfNeeded(seconds)
                     cardGrid.postDelayed({
                         view?.findNavController()?.navigate(R.id.action_play_to_leaderboard)
                     }, 1000)
                 }
             } else {
                 cardGrid.postDelayed({
-                    firstCard?.setImageResource(R.drawable.card_back)
-                    secondCard?.setImageResource(R.drawable.card_back)
+                    playMusic(R.raw.flip_back)
+                    flipcard(firstCard!!, showFront = false)
+                    flipcard(secondCard!!, showFront = false)
                     firstCard = null
                     secondCard = null
                     firstImgPath = null
@@ -165,6 +177,28 @@ class PlayFragment : Fragment() {
         }
     }
 
+    private fun loadBestTime() {
+        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val best = sharedPref.getInt("BEST_TIME", Int.MAX_VALUE)
+        if (best != Int.MAX_VALUE) {
+            bestTime.text = "Best Time: ${formatTime(best)}"
+        }
+    }
+
+    private fun saveBestTimeIfNeeded(current: Int) {
+        val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val best = sharedPref.getInt("BEST_TIME", Int.MAX_VALUE)
+        if (current < best) {
+            sharedPref.edit().putInt("BEST_TIME", current).apply()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopMusic()
+        stopBGM()
+    }
+
     private fun markedAsMatched(imageView: ImageView) {
         imageView.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
         imageView.animate()
@@ -172,17 +206,89 @@ class PlayFragment : Fragment() {
             .setDuration(450)
             .start()
     }
+    private fun dealcard(imageView: ImageView,index:Int){
+        imageView.alpha=0f
+        imageView.animate()
+            .alpha(1f)
+            .setStartDelay((index * 100).toLong())
+            .setDuration(300)
+            .start()
+    }
+    private fun flipcard(
+        card: ImageView,
+        showFront: Boolean,
+        frontImgPath: String? = null){
+        card.animate()
+            .rotationY(90f)
+            .setDuration(150)
+            .withEndAction {
+                if (showFront) {
+                    val bitmap = BitmapFactory.decodeFile(frontImgPath)
+                    card.setImageBitmap(bitmap)
+                } else {
+                    card.setImageResource(R.drawable.card_back)
+                }
+                card.rotationY = 90f
+                card.animate()
+                    .rotationY(180f)
+                    .setDuration(150)
+                    .start()
+            }
+            .start()
+    }
+
+    private fun playSoundEffect(flip:Boolean){
+        val soundId = if (flip) R.raw.flip else R.raw.error
+        playMusic(soundId)
+    }
+    private fun playMatchAnimation(imageView: ImageView){
+        imageView.animate()
+            .scaleX(1.2f).scaleY(1.2f)
+            .setDuration(100)
+            .withEndAction {
+                imageView.animate()
+                    .scaleX(1f).scaleY(1f)
+                    .setDuration(100)
+                    .start()
+            }
+        playMusic(R.raw.match_music)
+    }
+
+    private fun startBGM() {
+        if (bgmPlayer == null) {
+            bgmPlayer = MediaPlayer.create(requireContext(), R.raw.bgm)
+            bgmPlayer?.isLooping = true
+            bgmPlayer?.start()
+        }
+    }
+    private fun stopBGM() {
+        bgmPlayer?.stop()
+        bgmPlayer?.release()
+        bgmPlayer = null
+    }
+    private fun playMusic(index:Int){
+        mediaPlayer?.release()
+        mediaPlayer= MediaPlayer.create(requireContext(),index).apply{
+                setOnCompletionListener { release() }
+            start()
+        }
+    }
 
     private fun updateMatchCounter(){
         matchCounter.text = "$matchedCount / 6 matches"
     }
-
-    private fun updateTimerText(seconds: Int){
+    private fun formatTime(seconds: Int): String {
         val hours = seconds / 3600
         val minutes = (seconds % 3600) / 60
-        val second = seconds % 60
-        val timerFormat = String.format("%02d:%02d:%02d", hours, minutes, second)
-
+        val secs = seconds % 60
+        return if (hours > 0) {
+            String.format("%02d:%02d:%02d", hours, minutes, secs)
+        } else {
+            String.format("%02d:%02d", minutes, secs)
+        }
+    }
+    private fun updateTimerText(seconds: Int){
+        var timerFormat = formatTime(seconds)
         timer.text = "$timerFormat"
     }
 
@@ -198,4 +304,9 @@ class PlayFragment : Fragment() {
         handler.removeCallbacks(runTimer)
     }
 
+    private fun stopMusic() {
+        mediaPlayer?.stop()
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
 }

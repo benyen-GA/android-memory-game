@@ -44,4 +44,13 @@
         android:layout_height="100dp"
         android:layout_marginTop="10dp"/>
 
+    <TextView
+        android:id="@+id/bestTimeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Best Time: --:--:--"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
 </LinearLayout>

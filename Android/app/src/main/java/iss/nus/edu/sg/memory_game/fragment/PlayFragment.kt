@@ -64,9 +64,6 @@ class PlayFragment : Fragment() {
         matchCounter = view.findViewById(R.id.matchCounter)
         timer = view.findViewById(R.id.timer)
 
-        view.findViewById<Button>(R.id.btnToLeaderboard)?.setOnClickListener {
-            view.findNavController().navigate(R.id.action_play_to_leaderboard)
-        }
         bestTime = view.findViewById(R.id.bestTimeTextView)
         loadBestTime()
         startBGM()
@@ -100,7 +97,7 @@ class PlayFragment : Fragment() {
                     height = 0
                     rowSpec = GridLayout.spec(i / columns, 1f)
                     columnSpec = GridLayout.spec(i % columns, 1f)
-                    setMargins(5,5,5,5)
+                    setMargins(8,8,8,8)
                 }
                 dealcard(this,i)
                 setOnClickListener {
@@ -114,9 +111,7 @@ class PlayFragment : Fragment() {
                         return@setOnClickListener
                     }
                     playSoundEffect(true)
-
-                    val bitmap = BitmapFactory.decodeFile(imgPath)
-                    setImageBitmap(bitmap)
+                    flipcard(this, showFront = true, frontImgPath = imgPath)
 
                     flipLogic(this, imgPath)
                 }
@@ -127,23 +122,8 @@ class PlayFragment : Fragment() {
 
     private fun getImagePaths(): List<String> {
         val context = requireContext()
-        val downloadedImg = listOf(
-            R.drawable.card_1_test,
-            R.drawable.card_2_test,
-            R.drawable.card_3_test,
-            R.drawable.card_4_test,
-            R.drawable.card_5_test,
-            R.drawable.card_6_test
-        )
-
-        return downloadedImg.mapIndexed { index, i ->
-            val inputStream = context.resources.openRawResource(i)
-            val file = File(context.cacheDir, "img_$index.jpg")
-            val outputStream = FileOutputStream(file)
-            inputStream.copyTo(outputStream)
-            inputStream.close()
-            outputStream.close()
-            file.absolutePath
+        return (1..6).map { index ->
+            File(context.cacheDir, "image_$index.jpg").absolutePath
         }
     }
 
@@ -184,10 +164,10 @@ class PlayFragment : Fragment() {
                     }, 1000)
                 }
             } else {
-                playMusic(R.raw.flip_back)
                 cardGrid.postDelayed({
-                    firstCard?.setImageResource(R.drawable.card_back)
-                    secondCard?.setImageResource(R.drawable.card_back)
+                    playMusic(R.raw.flip_back)
+                    flipcard(firstCard!!, showFront = false)
+                    flipcard(secondCard!!, showFront = false)
                     firstCard = null
                     secondCard = null
                     firstImgPath = null
@@ -216,7 +196,7 @@ class PlayFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         stopMusic()
-        startBGM()
+        stopBGM()
     }
 
     private fun markedAsMatched(imageView: ImageView) {
@@ -234,6 +214,29 @@ class PlayFragment : Fragment() {
             .setDuration(300)
             .start()
     }
+    private fun flipcard(
+        card: ImageView,
+        showFront: Boolean,
+        frontImgPath: String? = null){
+        card.animate()
+            .rotationY(90f)
+            .setDuration(150)
+            .withEndAction {
+                if (showFront) {
+                    val bitmap = BitmapFactory.decodeFile(frontImgPath)
+                    card.setImageBitmap(bitmap)
+                } else {
+                    card.setImageResource(R.drawable.card_back)
+                }
+                card.rotationY = 90f
+                card.animate()
+                    .rotationY(180f)
+                    .setDuration(150)
+                    .start()
+            }
+            .start()
+    }
+
     private fun playSoundEffect(flip:Boolean){
         val soundId = if (flip) R.raw.flip else R.raw.error
         playMusic(soundId)

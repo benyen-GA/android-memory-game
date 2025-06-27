@@ -61,6 +61,9 @@ class PlayFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val isPaidUser = loginPrefs.getBoolean("isPaidUser", false)
+
         matchCounter = view.findViewById(R.id.matchCounter)
         timer = view.findViewById(R.id.timer)
 
@@ -77,7 +80,11 @@ class PlayFragment : Fragment() {
 
         showCardBacks()
 
-        childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
+        if (!isPaidUser) {
+            childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
+        } else {
+            view.findViewById<View>(R.id.adView)?.visibility = View.INVISIBLE
+        }
     }
 
     private fun showCardBacks(){
@@ -111,6 +118,7 @@ class PlayFragment : Fragment() {
                         return@setOnClickListener
                     }
                     playSoundEffect(true)
+                    isFlipping = true
                     flipcard(this, showFront = true, frontImgPath = imgPath)
 
                     flipLogic(this, imgPath)
@@ -131,9 +139,9 @@ class PlayFragment : Fragment() {
         if (firstCard == null){
             firstCard = currentCard
             firstImgPath = imgPath
+            isFlipping = false
         } else if (secondCard == null){
             secondCard = currentCard
-            isFlipping = true
 
             if (firstImgPath == imgPath){
                 firstCard?.tag = "matched"
@@ -164,8 +172,8 @@ class PlayFragment : Fragment() {
                     }, 1000)
                 }
             } else {
+                playMusic(R.raw.flip_back)
                 cardGrid.postDelayed({
-                    playMusic(R.raw.flip_back)
                     flipcard(firstCard!!, showFront = false)
                     flipcard(secondCard!!, showFront = false)
                     firstCard = null
@@ -217,14 +225,25 @@ class PlayFragment : Fragment() {
     private fun flipcard(
         card: ImageView,
         showFront: Boolean,
-        frontImgPath: String? = null){
+        frontImgPath: String? = null
+    ) {
+        card.isEnabled = false
+
         card.animate()
             .rotationY(90f)
             .setDuration(150)
             .withEndAction {
-                if (showFront) {
-                    val bitmap = BitmapFactory.decodeFile(frontImgPath)
-                    card.setImageBitmap(bitmap)
+                if (showFront && frontImgPath != null) {
+                    Thread {
+                        val bitmap = BitmapFactory.decodeFile(frontImgPath)
+                        card.post {
+                            if (bitmap != null) {
+                                card.setImageBitmap(bitmap)
+                            } else {
+                                card.setImageResource(R.drawable.card_loading)
+                            }
+                        }
+                    }.start()
                 } else {
                     card.setImageResource(R.drawable.card_back)
                 }
@@ -232,10 +251,14 @@ class PlayFragment : Fragment() {
                 card.animate()
                     .rotationY(180f)
                     .setDuration(150)
+                    .withEndAction {
+                        card.isEnabled = true
+                    }
                     .start()
             }
             .start()
     }
+
 
     private fun playSoundEffect(flip:Boolean){
         val soundId = if (flip) R.raw.flip else R.raw.error

@@ -1,56 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:id="@+id/playFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <!-- Top Bar -->
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="10dp">
+        android:layout_marginBottom="12dp">
 
         <TextView
             android:id="@+id/matchCounter"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="start"
+            android:text="0 / 6 matches"
             android:textSize="20sp"
-            android:textStyle="bold"/>
-        
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/timer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="end"
+            android:text="00:00"
             android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
 
-    <GridLayout
-        android:id="@+id/cardGrid"
+    <!-- RecyclerView for Cards -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cardRecycler"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:columnCount="3"
-        android:rowCount="4"/>
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="4dp"
+        android:overScrollMode="never" />
 
+    <!-- Ad Container -->
     <FrameLayout
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="8dp" />
 
+    <!-- Best Time -->
     <TextView
         android:id="@+id/bestTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Best Time: --:--:--"
-        android:textColor="#000000"
+        android:text="Best Time: --:--"
         android:textSize="16sp"
-        android:layout_marginTop="8dp"/>
-
+        android:layout_marginTop="8dp"
+        android:textColor="#000000" />
 </LinearLayout>

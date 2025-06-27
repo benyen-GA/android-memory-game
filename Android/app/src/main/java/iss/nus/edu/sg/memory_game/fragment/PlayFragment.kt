@@ -1,212 +1,258 @@
 package iss.nus.edu.sg.memory_game.fragment
 
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.PorterDuff
 import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.GridLayout
-import android.widget.ImageView
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
-import android.media.SoundPool
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import iss.nus.edu.sg.memory_game.R
+import iss.nus.edu.sg.memory_game.adapter.CardAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
-import android.util.Log
 
 class PlayFragment : Fragment() {
-    private lateinit var cardGrid: GridLayout
-    private lateinit var imagePathList: List<String>
+    private lateinit var cardRecycler: RecyclerView
     private lateinit var matchCounter: TextView
     private lateinit var timer: TextView
     private lateinit var bestTime: TextView
+    private lateinit var adView: FrameLayout
     private lateinit var soundPool: SoundPool
+    private var soundbgm:Int = 0
+    private var sounderror: Int = 0
+    private var soundflip: Int = 0
+    private var soundflipback: Int = 0
+    private var soundmatchmusic: Int = 0
+    private var soundwin: Int = 0
 
-    private var imageList: List<String> = listOf()
-    private var firstCard: ImageView? = null
-    private var secondCard: ImageView? = null
-    private var firstImgPath: String? = null
+    private val imagePathList = mutableListOf<String>()
+    private val bitmapCache = mutableMapOf<String, Bitmap>()
+    private var cardAdapter: CardAdapter? = null
+
+    private var firstPosition: Int? = null
     private var matchedCount = 0
     private var isFlipping = false
     private var gameStarted = false
     private var seconds = 0
     private var runningTimer = false
     private val handler = Handler(Looper.getMainLooper())
-    private val runTimer = object : Runnable{
+    private val runTimer = object : Runnable {
         override fun run() {
-            if (runningTimer){
+            if (runningTimer) {
                 seconds++
                 updateTimerText(seconds)
                 handler.postDelayed(this, 1000)
             }
         }
     }
-    private var mediaPlayer: MediaPlayer?=null
     private var bgmPlayer: MediaPlayer? = null
-    private val soundMap = mutableMapOf<Int, Int>()
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_play, container, false)
-        cardGrid = view.findViewById(R.id.cardGrid)
+        //initialising views to be ussed
+        cardRecycler = view.findViewById<RecyclerView>(R.id.cardRecycler)
+        matchCounter = view.findViewById(R.id.matchCounter)
+        timer = view.findViewById(R.id.timer)
+        bestTime = view.findViewById(R.id.bestTimeTextView)
+        adView = view.findViewById(R.id.adView)
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
-        val isPaidUser = loginPrefs.getBoolean("isPaidUser", false)
+        //install soundpool
+        soundPool = SoundPool.Builder()
+            .setMaxStreams(6)
+            .build()
+        sounderror = soundPool.load(context, R.raw.error, 1)
+        soundflip = soundPool.load(context, R.raw.flip, 1)
+        soundflipback = soundPool.load(context, R.raw.flip_back, 1)
+        soundmatchmusic = soundPool.load(context, R.raw.match_music, 1)
+        soundwin = soundPool.load(context, R.raw.win, 1)
+        soundbgm = soundPool.load(context,R.raw.bgm,1)
 
-        matchCounter = view.findViewById(R.id.matchCounter)
-        timer = view.findViewById(R.id.timer)
-
-        bestTime = view.findViewById(R.id.bestTimeTextView)
+        //initalising music, counter, best time and timer
+        soundPool.play(soundbgm,1f, 1f, 1, 1, 1f)
         loadBestTime()
-        startBGM()
-
-        imagePathList = getImagePaths()
-
-        soundPool = SoundPool.Builder().setMaxStreams(5).build()
-        soundMap[R.raw.flip] = soundPool.load(requireContext(), R.raw.flip, 1)
-        soundMap[R.raw.error] = soundPool.load(requireContext(), R.raw.error, 1)
-        soundMap[R.raw.match_music] = soundPool.load(requireContext(), R.raw.match_music, 1)
-        soundMap[R.raw.flip_back] = soundPool.load(requireContext(), R.raw.flip_back, 1)
-        soundMap[R.raw.win] = soundPool.load(requireContext(), R.raw.win, 1)
-
-        matchedCount = 0
-        gameStarted = false
         updateMatchCounter()
         updateTimerText(0)
 
-        showCardBacks()
-
+        //retrieving loginPrefs for ad visibility
+        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val isPaidUser = loginPrefs.getBoolean("isPaidUser", false)
         if (!isPaidUser) {
             childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
         } else {
-            view.findViewById<View>(R.id.adView)?.visibility = View.INVISIBLE
+            adView.visibility = View.GONE
         }
+
+        prepareGameImages()
     }
 
-    private fun showCardBacks(){
-        cardGrid.removeAllViews()
-
-        val columns = 3
-
-        imageList = (imagePathList + imagePathList).shuffled()
-
-        for (i in 0..11){
-            val imgPath = imageList[i]
-            val card = ImageView(requireContext()).apply {
-                setImageResource(R.drawable.card_back)
-                scaleType = ImageView.ScaleType.CENTER_CROP
-                layoutParams = GridLayout.LayoutParams().apply {
-                    width = 0
-                    height = 0
-                    rowSpec = GridLayout.spec(i / columns, 1f)
-                    columnSpec = GridLayout.spec(i % columns, 1f)
-                    setMargins(8,8,8,8)
-                }
-                dealcard(this,i)
-                setOnClickListener {
-
-                    if (!gameStarted){
-                        gameStarted = true
-                        startTimer()
-                    }
-
-                    if (isFlipping || this.tag == "matched" || this == firstCard) {
-                        playSoundEffect(false)
-                        return@setOnClickListener
-                    }
-                    playSoundEffect(true)
-                    isFlipping = true
-                    Log.d("Playfragment", "ImgPath = $imgPath")
-                    flipcard(this, showFront = true, frontImgPath = imgPath){
-                        flipLogic(this, imgPath)
-                    }
-                }
-            }
-            cardGrid.addView(card)
-        }
-    }
-
-    private fun getImagePaths(): List<String> {
+    private fun prepareGameImages() {
+        imagePathList.clear()
         val context = requireContext()
-        return (1..6).map { index ->
-            File(context.cacheDir, "image_$index.jpg").absolutePath
+        //retrieving the images path from cache, storing it into a mutable list (imagePathList)
+        for (i in 1..6) {
+            val path = File(context.cacheDir, "image_$i.jpg").absolutePath
+            imagePathList.add(path)
+            val file = File(path)
+            Log.d("PlayFragment", "Image_$i exists: ${file.exists()}")
+        }
+        //duplicating images and then shuffle here
+        imagePathList.addAll(imagePathList)
+        imagePathList.shuffle()
+        preloadBitmapsAndSetupRecycler()
+    }
+
+    private fun preloadBitmapsAndSetupRecycler() {
+
+        // retrieve the full width of the device's screen in pixels, then divide by 3
+        //cos 3 columns, 24 is just for buffer. this will give an optimal size per image
+        val size = resources.displayMetrics.widthPixels / 3 - 24
+
+        //using coroutines here for better lightweight and smoother performance than thread.
+        //coroutines will be tied to the lifecycle of view (lifecycleScope)
+        lifecycleScope.launch(Dispatchers.IO) {
+            for (path in imagePathList.distinct()) {
+                //decode images here, store it in bitmap
+                val bitmap = decodeBitmap(path, size, size)
+                if (bitmap != null) {
+                    //add in the bitmap (decoded image) into the mutable arraylist
+                    bitmapCache[path] = bitmap
+                } else {
+                    Log.w("PlayFragment", "Failed to decode bitmap for: $path")
+                }
+            }
+            withContext(Dispatchers.Main) {
+                setupRecycler()
+            }
         }
     }
 
-    private fun flipLogic(currentCard: ImageView, imgPath: String){
-        if (firstCard == null){
-            firstCard = currentCard
-            firstImgPath = imgPath
-            isFlipping = false
-        } else if (secondCard == null){
-            secondCard = currentCard
+    private fun setupRecycler() {
+        cardAdapter = CardAdapter(imagePathList, bitmapCache) { position, path, imageView ->
 
-            if (firstImgPath == imgPath){
-                firstCard?.tag = "matched"
-                secondCard?.tag = "matched"
-                matchedCount ++
-                updateMatchCounter()
-                firstCard?.let {
-                    markedAsMatched(it)
-                    playMatchAnimation(it)
-                }
-                secondCard?.let {
-                    markedAsMatched(it)
-                    playMatchAnimation(it)
-                }
+            if (isFlipping || imageView.tag == "matched"){
+                soundPool.play(sounderror,1f, 1f, 1, 0, 1f)
+                return@CardAdapter
+            }
 
-                firstCard = null
-                secondCard = null
-                firstImgPath = null
-                isFlipping = false
+            //on game start, to start timer, set bool flag true
+            if (!gameStarted) {
+                gameStarted = true
+                startTimer()
+            }
+            //populating imageview from preloaded bitmap arraylist
+            imageView.setImageBitmap(bitmapCache[path])
 
-                if (matchedCount == 6){
-                    stopTimer()
-                    Toast.makeText(context,"All matched! Congratulation!",Toast.LENGTH_SHORT).show()
-                    playSound(R.raw.win)
-                    saveBestTimeIfNeeded(seconds)
-                    cardGrid.postDelayed({
-                        view?.findNavController()?.navigate(R.id.action_play_to_leaderboard)
-                    }, 1000)
-                }
+            if (firstPosition == null) {
+                firstPosition = position
             } else {
-                playSound(R.raw.flip_back)
-                cardGrid.postDelayed({
-                    flipcard(firstCard!!, showFront = false)
-                    flipcard(secondCard!!, showFront = false)
+                isFlipping = true
+                val first = firstPosition!!
+                val second = position
+                val firstPath = imagePathList[first]
+                val secondPath = imagePathList[second]
 
-                    firstCard = null
-                    secondCard = null
-                    firstImgPath = null
-                    isFlipping = false
-                }, 1000)
+                if (firstPath == secondPath && first != second) {
+                    soundPool.play(soundmatchmusic,1f, 1f, 1, 0, 1f)
+                    cardAdapter?.markAsMatched(imageView)
+                    handler.postDelayed({
+                        matchedCount++
+                        updateMatchCounter()
+                        if (matchedCount == 6) {
+                            soundPool.play(soundwin,1f, 1f, 1, 0, 1f)
+                            stopTimer()
+                            Toast.makeText(context, "All matched! Congratulation!", Toast.LENGTH_SHORT).show()
+                            saveBestTimeIfNeeded(seconds)
+                            view?.findNavController()?.navigate(R.id.action_play_to_leaderboard)
+                        }
+                        isFlipping = false
+                        firstPosition = null
+                    }, 500)
+                } else {
+                    soundPool.play(soundflipback,1f, 1f, 1, 0, 1f)
+                    handler.postDelayed({
+                        cardAdapter?.hideImage(imageView)
+                        val recyclerChild = cardRecycler.findViewHolderForAdapterPosition(first)
+                        if (recyclerChild is CardAdapter.CardViewHolder) {
+                            cardAdapter?.hideImage(recyclerChild.imageView)
+                        }
+                        isFlipping = false
+                        firstPosition = null
+                    }, 500)
+                }
             }
         }
+        cardRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
+        cardRecycler.adapter = cardAdapter
+        cardRecycler.invalidate()
+        Log.d("PlayFragment", "Adapter set with ${imagePathList.size} items.")
+    }
+
+    private fun decodeBitmap(path: String, targetWidth: Int, targetHeight: Int): Bitmap? {
+        val options = BitmapFactory.Options().apply {
+            //decode only image size first
+            inJustDecodeBounds = true
+        }
+        BitmapFactory.decodeFile(path, options)
+
+        //resize or shrink image based on target size
+        val widthRatio = options.outWidth / targetWidth
+        val heightRatio = options.outHeight / targetHeight
+        val scale = maxOf(1, minOf(widthRatio, heightRatio))
+        options.inSampleSize = scale
+
+        // deecode actual bitmap
+        options.inJustDecodeBounds = false
+        return BitmapFactory.decodeFile(path, options)
+    }
+
+    private fun updateMatchCounter() {
+        matchCounter.text = "$matchedCount / 6 matches"
+    }
+
+    private fun updateTimerText(seconds: Int) {
+        val minutes = seconds / 60
+        val secs = seconds % 60
+        timer.text = String.format("%02d:%02d", minutes, secs)
+    }
+
+    private fun startTimer() {
+        if (!runningTimer) {
+            runningTimer = true
+            handler.post(runTimer)
+        }
+    }
+
+    private fun stopTimer() {
+        runningTimer = false
+        handler.removeCallbacks(runTimer)
     }
 
     private fun loadBestTime() {
         val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
         val best = sharedPref.getInt("BEST_TIME", Int.MAX_VALUE)
         if (best != Int.MAX_VALUE) {
-            bestTime.text = "Best Time: ${formatTime(best)}"
+            bestTime.text = "Best Time: ${String.format("%02d:%02d", best / 60, best % 60)}"
         }
     }
 
@@ -220,133 +266,6 @@ class PlayFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        stopMusic()
-        stopBGM()
         soundPool.release()
-    }
-
-    private fun markedAsMatched(imageView: ImageView) {
-        imageView.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
-        imageView.animate()
-            .alpha(0.6f)
-            .setDuration(450)
-            .start()
-    }
-    private fun dealcard(imageView: ImageView,index:Int){
-        imageView.alpha=0f
-        imageView.animate()
-            .alpha(1f)
-            .setStartDelay((index * 100).toLong())
-            .setDuration(300)
-            .start()
-    }
-    private fun flipcard(
-        card: ImageView,
-        showFront: Boolean,
-        frontImgPath: String? = null,
-        onFlipped: (() -> Unit)? = null
-    ) {
-        card.isEnabled = false
-
-        card.animate()
-            .rotationY(90f)
-            .setDuration(150)
-            .withEndAction {
-                if (showFront && frontImgPath != null) {
-                    lifecycleScope.launch {
-                        val bitmap = withContext(Dispatchers.IO) {
-                            BitmapFactory.decodeFile(frontImgPath)
-                        }
-                        card.setImageBitmap(bitmap ?: BitmapFactory.decodeResource(resources, R.drawable.card_loading))
-                    }
-                } else {
-                    card.setImageResource(R.drawable.card_back)
-                }
-                card.rotationY = 90f
-                card.animate()
-                    .rotationY(180f)
-                    .setDuration(150)
-                    .withEndAction {
-                        card.isEnabled = true
-                        onFlipped?.invoke()
-                    }
-                    .start()
-            }
-            .start()
-    }
-
-
-    private fun playSoundEffect(flip:Boolean){
-        val soundId = if (flip) R.raw.flip else R.raw.error
-        soundMap[soundId]?.let {
-            soundPool.play(it, 1f, 1f, 1, 0, 1f)
-        }
-    }
-    private fun playMatchAnimation(imageView: ImageView){
-        imageView.animate()
-            .scaleX(1.2f).scaleY(1.2f)
-            .setDuration(100)
-            .withEndAction {
-                imageView.animate()
-                    .scaleX(1f).scaleY(1f)
-                    .setDuration(100)
-                    .start()
-            }
-        playSound(R.raw.match_music)
-    }
-
-    private fun startBGM() {
-        if (bgmPlayer == null) {
-            bgmPlayer = MediaPlayer.create(requireContext(), R.raw.bgm)
-            bgmPlayer?.isLooping = true
-            bgmPlayer?.start()
-        }
-    }
-    private fun stopBGM() {
-        bgmPlayer?.stop()
-        bgmPlayer?.release()
-        bgmPlayer = null
-    }
-
-    private fun playSound(resId: Int) {
-        soundMap[resId]?.let { soundId ->
-            soundPool.play(soundId, 1f, 1f, 0, 0, 1f)
-        }
-    }
-
-    private fun updateMatchCounter(){
-        matchCounter.text = "$matchedCount / 6 matches"
-    }
-    private fun formatTime(seconds: Int): String {
-        val hours = seconds / 3600
-        val minutes = (seconds % 3600) / 60
-        val secs = seconds % 60
-        return if (hours > 0) {
-            String.format("%02d:%02d:%02d", hours, minutes, secs)
-        } else {
-            String.format("%02d:%02d", minutes, secs)
-        }
-    }
-    private fun updateTimerText(seconds: Int){
-        var timerFormat = formatTime(seconds)
-        timer.text = "$timerFormat"
-    }
-
-    private fun startTimer(){
-        if (!runningTimer){
-            runningTimer = true
-            handler.post(runTimer)
-        }
-    }
-
-    private fun stopTimer(){
-        runningTimer = false
-        handler.removeCallbacks(runTimer)
-    }
-
-    private fun stopMusic() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = null
     }
 }

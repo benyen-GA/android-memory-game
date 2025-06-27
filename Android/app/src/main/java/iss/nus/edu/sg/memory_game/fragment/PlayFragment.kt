@@ -1,5 +1,9 @@
 package iss.nus.edu.sg.memory_game.fragment
 
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -11,16 +15,17 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.media.SoundPool
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import iss.nus.edu.sg.memory_game.R
 import java.io.File
 import java.io.FileOutputStream
+import android.util.Log
 
 class PlayFragment : Fragment() {
     private lateinit var cardGrid: GridLayout
@@ -28,6 +33,7 @@ class PlayFragment : Fragment() {
     private lateinit var matchCounter: TextView
     private lateinit var timer: TextView
     private lateinit var bestTime: TextView
+    private lateinit var soundPool: SoundPool
 
     private var imageList: List<String> = listOf()
     private var firstCard: ImageView? = null
@@ -50,6 +56,7 @@ class PlayFragment : Fragment() {
     }
     private var mediaPlayer: MediaPlayer?=null
     private var bgmPlayer: MediaPlayer? = null
+    private val soundMap = mutableMapOf<Int, Int>()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -72,6 +79,13 @@ class PlayFragment : Fragment() {
         startBGM()
 
         imagePathList = getImagePaths()
+
+        soundPool = SoundPool.Builder().setMaxStreams(5).build()
+        soundMap[R.raw.flip] = soundPool.load(requireContext(), R.raw.flip, 1)
+        soundMap[R.raw.error] = soundPool.load(requireContext(), R.raw.error, 1)
+        soundMap[R.raw.match_music] = soundPool.load(requireContext(), R.raw.match_music, 1)
+        soundMap[R.raw.flip_back] = soundPool.load(requireContext(), R.raw.flip_back, 1)
+        soundMap[R.raw.win] = soundPool.load(requireContext(), R.raw.win, 1)
 
         matchedCount = 0
         gameStarted = false
@@ -108,6 +122,7 @@ class PlayFragment : Fragment() {
                 }
                 dealcard(this,i)
                 setOnClickListener {
+
                     if (!gameStarted){
                         gameStarted = true
                         startTimer()
@@ -119,9 +134,10 @@ class PlayFragment : Fragment() {
                     }
                     playSoundEffect(true)
                     isFlipping = true
-                    flipcard(this, showFront = true, frontImgPath = imgPath)
-
-                    flipLogic(this, imgPath)
+                    Log.d("Playfragment", "ImgPath = $imgPath")
+                    flipcard(this, showFront = true, frontImgPath = imgPath){
+                        flipLogic(this, imgPath)
+                    }
                 }
             }
             cardGrid.addView(card)
@@ -165,17 +181,18 @@ class PlayFragment : Fragment() {
                 if (matchedCount == 6){
                     stopTimer()
                     Toast.makeText(context,"All matched! Congratulation!",Toast.LENGTH_SHORT).show()
-                    playMusic(R.raw.win)
+                    playSound(R.raw.win)
                     saveBestTimeIfNeeded(seconds)
                     cardGrid.postDelayed({
                         view?.findNavController()?.navigate(R.id.action_play_to_leaderboard)
                     }, 1000)
                 }
             } else {
-                playMusic(R.raw.flip_back)
+                playSound(R.raw.flip_back)
                 cardGrid.postDelayed({
                     flipcard(firstCard!!, showFront = false)
                     flipcard(secondCard!!, showFront = false)
+
                     firstCard = null
                     secondCard = null
                     firstImgPath = null
@@ -205,6 +222,7 @@ class PlayFragment : Fragment() {
         super.onDestroyView()
         stopMusic()
         stopBGM()
+        soundPool.release()
     }
 
     private fun markedAsMatched(imageView: ImageView) {
@@ -225,7 +243,8 @@ class PlayFragment : Fragment() {
     private fun flipcard(
         card: ImageView,
         showFront: Boolean,
-        frontImgPath: String? = null
+        frontImgPath: String? = null,
+        onFlipped: (() -> Unit)? = null
     ) {
         card.isEnabled = false
 
@@ -234,16 +253,12 @@ class PlayFragment : Fragment() {
             .setDuration(150)
             .withEndAction {
                 if (showFront && frontImgPath != null) {
-                    Thread {
-                        val bitmap = BitmapFactory.decodeFile(frontImgPath)
-                        card.post {
-                            if (bitmap != null) {
-                                card.setImageBitmap(bitmap)
-                            } else {
-                                card.setImageResource(R.drawable.card_loading)
-                            }
+                    lifecycleScope.launch {
+                        val bitmap = withContext(Dispatchers.IO) {
+                            BitmapFactory.decodeFile(frontImgPath)
                         }
-                    }.start()
+                        card.setImageBitmap(bitmap ?: BitmapFactory.decodeResource(resources, R.drawable.card_loading))
+                    }
                 } else {
                     card.setImageResource(R.drawable.card_back)
                 }
@@ -253,6 +268,7 @@ class PlayFragment : Fragment() {
                     .setDuration(150)
                     .withEndAction {
                         card.isEnabled = true
+                        onFlipped?.invoke()
                     }
                     .start()
             }
@@ -262,7 +278,9 @@ class PlayFragment : Fragment() {
 
     private fun playSoundEffect(flip:Boolean){
         val soundId = if (flip) R.raw.flip else R.raw.error
-        playMusic(soundId)
+        soundMap[soundId]?.let {
+            soundPool.play(it, 1f, 1f, 1, 0, 1f)
+        }
     }
     private fun playMatchAnimation(imageView: ImageView){
         imageView.animate()
@@ -274,7 +292,7 @@ class PlayFragment : Fragment() {
                     .setDuration(100)
                     .start()
             }
-        playMusic(R.raw.match_music)
+        playSound(R.raw.match_music)
     }
 
     private fun startBGM() {
@@ -289,11 +307,10 @@ class PlayFragment : Fragment() {
         bgmPlayer?.release()
         bgmPlayer = null
     }
-    private fun playMusic(index:Int){
-        mediaPlayer?.release()
-        mediaPlayer= MediaPlayer.create(requireContext(),index).apply{
-                setOnCompletionListener { release() }
-            start()
+
+    private fun playSound(resId: Int) {
+        soundMap[resId]?.let { soundId ->
+            soundPool.play(soundId, 1f, 1f, 0, 0, 1f)
         }
     }
 

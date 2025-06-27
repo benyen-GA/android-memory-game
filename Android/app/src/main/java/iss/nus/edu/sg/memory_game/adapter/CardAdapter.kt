@@ -14,7 +14,7 @@ class CardAdapter(
     private val bitmapCache: Map<String, Bitmap>,
     private val onCardClick: (position: Int, imagePath: String, cardView: ImageView) -> Unit
 ) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
-
+    private val matchedPositions = mutableSetOf<Int>()
     inner class CardViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.cardImageView)
     }
@@ -26,19 +26,30 @@ class CardAdapter(
     }
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-        val imagePath = imagePaths[position]
-
-        // Show card back by default
-        holder.imageView.setImageResource(R.drawable.card_back)
-        holder.imageView.tag = "back"
-        holder.imageView.isEnabled = true
+        if (matchedPositions.contains(position)) {
+            holder.imageView.setImageBitmap(bitmapCache[imagePaths[position]])
+            holder.imageView.tag = "matched"
+            holder.imageView.isEnabled = false
+        } else {
+            holder.imageView.setImageResource(R.drawable.card_back)
+            holder.imageView.tag = "back"
+            holder.imageView.isEnabled = true
+        }
 
         holder.imageView.setOnClickListener {
-            if (holder.imageView.tag == "matched" || !holder.imageView.isEnabled) return@setOnClickListener
+            if (holder.imageView.tag == "matched" || !holder.imageView.isEnabled || !holder.imageView.isClickable) {
+                return@setOnClickListener
+            }
             animateFlip(holder.imageView) {
-                onCardClick(position, imagePath, holder.imageView)
+                onCardClick(position, imagePaths[position], holder.imageView)
             }
         }
+    }
+
+    fun markAsMatched(imageView: ImageView, position: Int) {
+        matchedPositions.add(position)
+        imageView.tag = "matched"
+        imageView.isEnabled = false
     }
 
     override fun getItemCount(): Int = imagePaths.size
@@ -59,11 +70,6 @@ class CardAdapter(
             imageView.tag = "back"
             imageView.isEnabled = true
         }
-    }
-
-    fun markAsMatched(imageView: ImageView) {
-        imageView.tag = "matched"
-        imageView.isEnabled = false
     }
 
     private fun animateFlip(imageView: ImageView, onMidFlip: () -> Unit) {

@@ -34,7 +34,6 @@ class PlayFragment : Fragment() {
     private lateinit var bestTime: TextView
     private lateinit var adView: FrameLayout
     private lateinit var soundPool: SoundPool
-    private var soundbgm:Int = 0
     private var sounderror: Int = 0
     private var soundflip: Int = 0
     private var soundflipback: Int = 0
@@ -45,6 +44,7 @@ class PlayFragment : Fragment() {
     private val bitmapCache = mutableMapOf<String, Bitmap>()
     private var cardAdapter: CardAdapter? = null
 
+    private var bgmPlayer: MediaPlayer?=null
     private var firstPosition: Int? = null
     private var matchedCount = 0
     private var isFlipping = false
@@ -61,11 +61,10 @@ class PlayFragment : Fragment() {
             }
         }
     }
-    private var bgmPlayer: MediaPlayer? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_play, container, false)
-        //initialising views to be ussed
+        //initialising views to be used
         cardRecycler = view.findViewById<RecyclerView>(R.id.cardRecycler)
         matchCounter = view.findViewById(R.id.matchCounter)
         timer = view.findViewById(R.id.timer)
@@ -79,17 +78,17 @@ class PlayFragment : Fragment() {
 
         //install soundpool
         soundPool = SoundPool.Builder()
-            .setMaxStreams(6)
+            .setMaxStreams(8)
             .build()
         sounderror = soundPool.load(context, R.raw.error, 1)
         soundflip = soundPool.load(context, R.raw.flip, 1)
         soundflipback = soundPool.load(context, R.raw.flip_back, 1)
         soundmatchmusic = soundPool.load(context, R.raw.match_music, 1)
         soundwin = soundPool.load(context, R.raw.win, 1)
-        soundbgm = soundPool.load(context,R.raw.bgm,1)
+
 
         //initalising music, counter, best time and timer
-        soundPool.play(soundbgm,1f, 1f, 1, 1, 1f)
+        startBGM()
         loadBestTime()
         updateMatchCounter()
         updateTimerText(0)
@@ -150,17 +149,16 @@ class PlayFragment : Fragment() {
     private fun setupRecycler() {
         cardAdapter = CardAdapter(imagePathList, bitmapCache) { position, path, imageView ->
 
-            if (isFlipping || imageView.tag == "matched"){
-                soundPool.play(sounderror,1f, 1f, 1, 0, 1f)
+            if (isFlipping || imageView.tag == "matched" || !imageView.isEnabled) {
+                soundPool.play(sounderror, 1f, 1f, 1, 0, 1f)
                 return@CardAdapter
             }
 
-            //on game start, to start timer, set bool flag true
             if (!gameStarted) {
                 gameStarted = true
                 startTimer()
             }
-            //populating imageview from preloaded bitmap arraylist
+
             imageView.setImageBitmap(bitmapCache[path])
 
             if (firstPosition == null) {
@@ -173,13 +171,20 @@ class PlayFragment : Fragment() {
                 val secondPath = imagePathList[second]
 
                 if (firstPath == secondPath && first != second) {
-                    soundPool.play(soundmatchmusic,1f, 1f, 1, 0, 1f)
-                    cardAdapter?.markAsMatched(imageView)
+                    soundPool.play(soundmatchmusic, 1f, 1f, 1, 0, 1f)
+
+                    val firstViewHolder = cardRecycler.findViewHolderForAdapterPosition(first)
+                    if (firstViewHolder is CardAdapter.CardViewHolder) {
+                        cardAdapter?.markAsMatched(firstViewHolder.imageView, first)
+                    }
+                    
+                    cardAdapter?.markAsMatched(imageView, second)
+
                     handler.postDelayed({
                         matchedCount++
                         updateMatchCounter()
                         if (matchedCount == 6) {
-                            soundPool.play(soundwin,1f, 1f, 1, 0, 1f)
+                            soundPool.play(soundwin, 1f, 1f, 1, 0, 1f)
                             stopTimer()
                             Toast.makeText(context, "All matched! Congratulation!", Toast.LENGTH_SHORT).show()
                             saveBestTimeIfNeeded(seconds)
@@ -189,12 +194,12 @@ class PlayFragment : Fragment() {
                         firstPosition = null
                     }, 500)
                 } else {
-                    soundPool.play(soundflipback,1f, 1f, 1, 0, 1f)
+                    soundPool.play(soundflipback, 1f, 1f, 1, 0, 1f)
                     handler.postDelayed({
                         cardAdapter?.hideImage(imageView)
-                        val recyclerChild = cardRecycler.findViewHolderForAdapterPosition(first)
-                        if (recyclerChild is CardAdapter.CardViewHolder) {
-                            cardAdapter?.hideImage(recyclerChild.imageView)
+                        val firstViewHolder = cardRecycler.findViewHolderForAdapterPosition(first)
+                        if (firstViewHolder is CardAdapter.CardViewHolder) {
+                            cardAdapter?.hideImage(firstViewHolder.imageView)
                         }
                         isFlipping = false
                         firstPosition = null
@@ -202,10 +207,10 @@ class PlayFragment : Fragment() {
                 }
             }
         }
+
         cardRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
         cardRecycler.adapter = cardAdapter
         cardRecycler.invalidate()
-        Log.d("PlayFragment", "Adapter set with ${imagePathList.size} items.")
     }
 
     private fun decodeBitmap(path: String, targetWidth: Int, targetHeight: Int): Bitmap? {
@@ -247,6 +252,17 @@ class PlayFragment : Fragment() {
         runningTimer = false
         handler.removeCallbacks(runTimer)
     }
+    private fun startBGM() {
+        bgmPlayer = MediaPlayer.create(requireContext(), R.raw.bgm)
+        bgmPlayer?.isLooping = true
+        bgmPlayer?.start()
+    }
+
+    private fun stopBGM() {
+        bgmPlayer?.stop()
+        bgmPlayer?.release()
+        bgmPlayer= null
+    }
 
     private fun loadBestTime() {
         val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
@@ -267,5 +283,6 @@ class PlayFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         soundPool.release()
+        stopBGM()
     }
 }

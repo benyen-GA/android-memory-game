@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddDbContext<MyDbContext>();
+builder.Services.AddDbContext<MemoryGameContext>();
 
 var app = builder.Build();
 
@@ -36,9 +36,8 @@ void initDB()
 {
     using (var scope = app.Services.CreateScope())
     {
-        var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
-
-        ctx.Database.EnsureDeleted(); 
-        ctx.Database.EnsureCreated(); 
+        var ctx = scope.ServiceProvider.GetRequiredService<MemoryGameContext>();
+        if (!ctx.Database.CanConnect())
+            ctx.Database.EnsureCreated();
     }
 }

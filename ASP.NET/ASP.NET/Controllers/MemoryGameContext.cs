@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ASP.NET.Controllers;
 
-public class MyDbContext : DbContext
+public class MemoryGameContext : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { optionsBuilder.UseMySql(
             // provides database connection-string

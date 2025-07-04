@@ -86,7 +86,6 @@ class PlayFragment : Fragment() {
         soundmatchmusic = soundPool.load(context, R.raw.match_music, 1)
         soundwin = soundPool.load(context, R.raw.win, 1)
 
-
         //initalising music, counter, best time and timer
         startBGM()
         loadBestTime()
@@ -122,7 +121,6 @@ class PlayFragment : Fragment() {
     }
 
     private fun preloadBitmapsAndSetupRecycler() {
-
         // retrieve the full width of the device's screen in pixels, then divide by 3
         //cos 3 columns, 24 is just for buffer. this will give an optimal size per image
         val size = resources.displayMetrics.widthPixels / 3 - 24
@@ -163,6 +161,8 @@ class PlayFragment : Fragment() {
 
             if (firstPosition == null) {
                 firstPosition = position
+                imageView.isClickable=false
+                imageView.isEnabled=false
             } else {
                 isFlipping = true
                 val first = firstPosition!!
@@ -200,6 +200,8 @@ class PlayFragment : Fragment() {
                         val firstViewHolder = cardRecycler.findViewHolderForAdapterPosition(first)
                         if (firstViewHolder is CardAdapter.CardViewHolder) {
                             cardAdapter?.hideImage(firstViewHolder.imageView)
+                            firstViewHolder.imageView.isEnabled = true
+                            firstViewHolder.imageView.isClickable = true
                         }
                         isFlipping = false
                         firstPosition = null

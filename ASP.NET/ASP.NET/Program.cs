@@ -8,6 +8,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<MemoryGameContext>();
 
+builder.Services.AddScoped<AuthService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

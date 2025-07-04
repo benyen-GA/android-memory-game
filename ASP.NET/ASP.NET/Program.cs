@@ -1,4 +1,5 @@
 using ASP.NET.Controllers;
+using ASP.NET.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,10 @@ void initDB()
     using (var scope = app.Services.CreateScope())
     {
         var ctx = scope.ServiceProvider.GetRequiredService<MemoryGameContext>();
-        if (!ctx.Database.CanConnect())
-            ctx.Database.EnsureCreated();
+        ctx.Database.EnsureCreated();
+        
+        //populate user details on creation of user table
+        DbSeeder.Seed(ctx);
+
     }
 }

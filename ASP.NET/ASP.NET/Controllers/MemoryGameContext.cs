@@ -12,6 +12,8 @@ public class MemoryGameContext : DbContext
         );
         optionsBuilder.UseLazyLoadingProxies();
     }
+    
+    
     // our database tables
     public DbSet<User> User { get; set; }
     

@@ -10,6 +10,9 @@ builder.Services.AddDbContext<MemoryGameContext>();
 
 builder.Services.AddScoped<AuthService>();
 
+//LST: add score service
+builder.Services.AddScoped<ScoreService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

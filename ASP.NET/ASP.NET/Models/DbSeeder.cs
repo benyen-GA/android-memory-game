@@ -6,7 +6,7 @@ public static class DbSeeder
 {
     public static void Seed(MemoryGameContext context)
     {
-        //check if any user exists in db table,if not create new users
+        //check if any user exists in db table, if not create new users
         if (!context.User.Any())
         {
             var FreeUser = new User

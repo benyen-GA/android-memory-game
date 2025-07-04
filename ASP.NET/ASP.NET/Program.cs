@@ -1,7 +1,11 @@
+using ASP.NET.Controllers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<MyDbContext>();
 
 var app = builder.Build();
 
@@ -24,4 +28,17 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+initDB();
+
 app.Run();
+
+void initDB()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var ctx = scope.ServiceProvider.GetRequiredService<MyDbContext>();
+
+        ctx.Database.EnsureDeleted(); 
+        ctx.Database.EnsureCreated(); 
+    }
+}

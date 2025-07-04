@@ -7,10 +7,10 @@ public class User
   {
     Id = Guid.NewGuid().ToString();
   }
-  private string Id { get; set; }
-  private string Username { get; set; }
-  private string Password { get; set; }
-  private Boolean IsPaidUser { get; set; }
+  public string Id { get; set; }
+  public string Username { get; set; }
+  public string Password { get; set; }
+  public Boolean IsPaidUser { get; set; }
   
   // to establish 1 to 1 relationship w User and Leaderboard once Leaderboard is up
   

@@ -1,36 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj": {}
+    "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj": {}
   },
   "projects": {
-    "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj": {
+    "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj",
-        "projectName": "MemoryGameBackend",
-        "projectPath": "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\MemoryGameBackend.csproj",
-        "packagesPath": "C:\\Users\\prisc\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\prisc\\OneDrive\\Desktop\\Github\\android-memory-game\\.Net\\MemoryGameBackend\\obj\\",
+        "projectUniqueName": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
+        "projectName": "ASP.NET",
+        "projectPath": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
+        "packagesPath": "/Users/dionis/.nuget/packages/",
+        "outputPath": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\prisc\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/dionis/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -43,16 +37,23 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.300"
+        }
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
-            "Microsoft.AspNetCore.OpenApi": {
+            "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[9.0.6, )"
+              "version": "[8.0.17, )"
+            },
+            "Microsoft.EntityFrameworkCore.Proxies": {
+              "target": "Package",
+              "version": "[8.0.17, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.3, )"
             }
           },
           "imports": [
@@ -74,7 +75,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.411/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

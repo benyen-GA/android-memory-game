@@ -19,6 +19,12 @@ object RetrofitClient {
         retrofit.create(AuthApi::class.java)
     }
 
-
-
+    //LST: for scoreAPI
+    val scoreApi: ScoreApi by lazy {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(url)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        retrofit.create(ScoreApi::class.java)
+    }
 }

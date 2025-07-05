@@ -14,4 +14,6 @@ public class User
   
   // to establish 1 to 1 relationship w User and Leaderboard once Leaderboard is up
   
+  public virtual ICollection<Score> Score { get; set; }
+  
 }

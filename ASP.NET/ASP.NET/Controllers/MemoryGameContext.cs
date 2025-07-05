@@ -16,5 +16,6 @@ public class MemoryGameContext : DbContext
     
     // our database tables
     public DbSet<User> User { get; set; }
+    public DbSet<Score> Score { get; set; }
     
 }

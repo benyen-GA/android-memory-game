@@ -22,9 +22,14 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import iss.nus.edu.sg.memory_game.R
 import iss.nus.edu.sg.memory_game.adapter.CardAdapter
+import iss.nus.edu.sg.memory_game.apis.RetrofitClient
+import iss.nus.edu.sg.memory_game.dao.ScoreRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 
 class PlayFragment : Fragment() {
@@ -188,6 +193,8 @@ class PlayFragment : Fragment() {
                             stopTimer()
                             Toast.makeText(context, "All matched! Congratulation!", Toast.LENGTH_SHORT).show()
                             saveBestTimeIfNeeded(seconds)
+                            //LST: add the addScore funtion
+                            addScoreWithRetrofit(seconds)
                             view?.findNavController()?.navigate(R.id.action_play_to_leaderboard)
                         }
                         isFlipping = false
@@ -286,5 +293,29 @@ class PlayFragment : Fragment() {
         super.onDestroyView()
         soundPool.release()
         stopBGM()
+    }
+
+    //LST: add score to db
+    private fun addScoreWithRetrofit(seconds: Int) {
+        val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val userId = loginPrefs.getString("UserID", null) ?: return
+
+
+        val scoreRequest = ScoreRequest(userId = userId, time = seconds)
+
+        val call = RetrofitClient.scoreApi.addScore(scoreRequest)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "Score uploaded!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to upload score!", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

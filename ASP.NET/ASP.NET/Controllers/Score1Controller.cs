@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace ASP.NET.Controllers;
 
 [Route("api/[controller]")]
-public class ScoreController : Controller
+public class Score1Controller : Controller
 {
     private readonly ScoreService _service;
-    private readonly ILogger<ScoreController> _logger;
+    private readonly ILogger<Score1Controller> _logger;
 
-    public ScoreController(ScoreService service, ILogger<ScoreController> logger)
+    public Score1Controller(ScoreService service, ILogger<Score1Controller> logger)
     {
         _service = service;
         _logger = logger;

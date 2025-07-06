@@ -22,9 +22,17 @@ class LeaderBoardAdapter(private val items: List<ScoreResult>) : RecyclerView.Ad
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //getting individual score based on the position
         val score = items[position]
+        val minutes = score.time / 60
+        //remainder for seconds
+        val seconds = score.time % 60
+
+        //formatting time into MM:SS format
+        val formattedTime = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+
         holder.usernameText.text = score.username
-        holder.timeText.text = String.format("%02d:%02d", score.time/60, score.time % 60)
+        holder.timeText.text = formattedTime
     }
 
     override fun getItemCount() = items.size

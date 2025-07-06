@@ -48,8 +48,8 @@ void initDB()
         var ctx = scope.ServiceProvider.GetRequiredService<MemoryGameContext>();
         ctx.Database.EnsureCreated();
         
-        //populate user details on creation of user table
+        // Populate user details on creation of user table
         DbSeeder.Seed(ctx);
-
     }
 }
+

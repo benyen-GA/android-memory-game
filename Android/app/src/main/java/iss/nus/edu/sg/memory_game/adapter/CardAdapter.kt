@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import iss.nus.edu.sg.memory_game.R
 
+//card adapter to pass an anon function to cater logic for onClick of cards
 class CardAdapter(
     private val imagePaths: List<String>,
     private val bitmapCache: Map<String, Bitmap>,

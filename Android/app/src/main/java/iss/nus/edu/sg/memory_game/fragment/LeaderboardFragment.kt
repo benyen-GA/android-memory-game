@@ -33,7 +33,13 @@ class LeaderboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val currentScore = arguments?.getInt("score") ?: 0
-        view.findViewById<TextView>(R.id.yourScoreText).text = String.format("%02d:%02d", currentScore / 60, currentScore % 60)
+        val minutes = currentScore / 60
+        //remainder for seconds
+        val seconds = currentScore % 60
+
+        //formatting time into MM:SS format
+        val formattedTime = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}"
+        view.findViewById<TextView>(R.id.yourScoreText).text = formattedTime
 
         recyclerView = view.findViewById(R.id.scoreRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -45,10 +51,12 @@ class LeaderboardFragment : Fragment() {
         fetchTopScores()
     }
 
+    //sending req to ASP.NET server to fetch top 5 scores
     private fun fetchTopScores() {
         RetrofitClient.scoreApi.getTopFive().enqueue(object : Callback<List<ScoreResult>> {
             override fun onResponse(call: Call<List<ScoreResult>>, response: Response<List<ScoreResult>>) {
                 if (response.isSuccessful) {
+                    //if successful, to retrieve response body else it will return an empty list
                     val scores = response.body() ?: emptyList()
                     adapter = LeaderBoardAdapter(scores)
                     recyclerView.adapter = adapter
@@ -58,6 +66,7 @@ class LeaderboardFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<ScoreResult>>, t: Throwable) {
+                t.printStackTrace()
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

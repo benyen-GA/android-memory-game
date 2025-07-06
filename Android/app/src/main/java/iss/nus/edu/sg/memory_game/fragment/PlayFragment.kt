@@ -146,21 +146,30 @@ class PlayFragment : Fragment() {
         }
     }
 
+
     private fun setupRecycler() {
         cardAdapter = CardAdapter(imagePathList, bitmapCache) { position, path, imageView ->
+            //logic for onclick of cards to be passed over into adapter
 
+
+            //if flipping animation is triggered, and the images selected are already matched/ not enabled
+            //to play error sound
             if (isFlipping || imageView.tag == "matched" || !imageView.isEnabled) {
                 soundPool.play(sounderror, 1f, 1f, 1, 0, 1f)
                 return@CardAdapter
             }
 
+            //starting timer if game not yet started
             if (!gameStarted) {
                 gameStarted = true
                 startTimer()
             }
 
+            //extracting from the pre-decoded list of images for better performance
             imageView.setImageBitmap(bitmapCache[path])
 
+
+            //to check if its the start of a match
             if (firstPosition == null) {
                 firstPosition = position
                 isFlipping = true
@@ -170,12 +179,14 @@ class PlayFragment : Fragment() {
                 imageView.isEnabled = false
                 imageView.isClickable = false
             } else {
+                //if its the second card being flipped
                 isFlipping = true
                 val first = firstPosition!!
                 val second = position
                 val firstPath = imagePathList[first]
                 val secondPath = imagePathList[second]
 
+                //matching logic here
                 if (firstPath == secondPath && first != second) {
                     soundPool.play(soundmatchmusic, 1f, 1f, 1, 0, 1f)
 
@@ -193,6 +204,7 @@ class PlayFragment : Fragment() {
                         if (matchedCount == 6) {
                             stopTimer()
                             Toast.makeText(context, "All matched! Congratulation!", Toast.LENGTH_SHORT).show()
+
                             //LST: add the addScore funtion
                             addScoreWithRetrofit(seconds)
                             val mediaPlayer = MediaPlayer.create(context, R.raw.win)
@@ -304,6 +316,7 @@ class PlayFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                t.printStackTrace()
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

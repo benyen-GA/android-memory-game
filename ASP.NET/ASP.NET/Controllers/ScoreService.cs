@@ -21,9 +21,8 @@ public class ScoreService
 
         var score = new Score
         {
-            Id = Guid.NewGuid().ToString(),
             Time = scoreRequest.Time,
-            UserId = user.Id
+            User = user
         };
         
         db.Score.Add(score);
@@ -34,7 +33,7 @@ public class ScoreService
     public List<ScoreResult> TopFive()
     {
         var scoreboard = from s in db.Score
-                         join u in db.User on s.UserId equals u.Id
+                         join u in db.User on s.User.Id equals u.Id
                          orderby s.Time ascending
                          select new ScoreResult { Username = u.Username, Time = s.Time };
 

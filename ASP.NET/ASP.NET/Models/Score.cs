@@ -12,8 +12,6 @@ public class Score
     public string Id { get; set; }
     public int Time { get; set; }
 
-    public string UserId { get; set; }
-
     [ForeignKey("UserId")]
     public virtual User User { get; set; }
 }

@@ -204,7 +204,7 @@ class PlayFragment : Fragment() {
                         if (matchedCount == 6) {
                             stopTimer()
                             Toast.makeText(context, "All matched! Congratulation!", Toast.LENGTH_SHORT).show()
-                            
+
                             //LST: add the addScore funtion
                             addScoreWithRetrofit(seconds)
                             val mediaPlayer = MediaPlayer.create(context, R.raw.win)
@@ -316,6 +316,7 @@ class PlayFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
+                t.printStackTrace()
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

@@ -9,8 +9,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3bc2395-96f8-42a5-aadf-93ec79e0a20e" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ASP.NET/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASP.NET/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/Controllers/ScoreService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/Controllers/ScoreService.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASP.NET/Models/Score.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/Models/Score.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/fragment/PlayFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/fragment/PlayFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.sourcelink.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

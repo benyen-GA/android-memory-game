@@ -1,15 +1,98 @@
+# ===========================
+# ANDROID (Kotlin/Java)
+# ===========================
+
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+.gradle/
+.idea/
+local.properties
 .DS_Store
 /build
 /captures
 .externalNativeBuild
-.cxx
-local.properties
+
+# Android Studio auto-generated folders
+*.apk
+*.ap_
+
+# Kotlin/Java build
+*.class
+*.jar
+*.war
+*.ear
+
+# Ignore Android lint and logs
+lint/intermediates/
+lint/generated/
+*.log
+
+# Firebase/Crashlytics
+/google-services.json
+crashlytics-build.properties
+
+# ===========================
+# ASP.NET (C# / .NET Core)
+# ===========================
+
+# Build results
+bin/
+obj/
+[Bb]uild/
+[Bb]uild[Ll]og.*
+
+# Rider or VS Code config
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ASP.NET-specific
+*.db
+*.pdb
+*.mdb
+*.log
+*.vspscc
+*.vssscc
+*.cache
+*.dbmdl
+
+# dotnet user secrets
+secrets.json
+
+# ASP.NET published output
+publish/
+wwwroot/lib/
+
+# NuGet
+*.nupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Entity Framework
+Migrations/
+
+# Temporary files
+~$*
+*.tmp
+
+# OS-specific
+Thumbs.db
+ehthumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+
+# ===========================
+# GENERAL
+# ===========================
+*.env
+.env.*
+*.swp
+

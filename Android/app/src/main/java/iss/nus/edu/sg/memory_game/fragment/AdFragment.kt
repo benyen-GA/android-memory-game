@@ -35,20 +35,14 @@ class AdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        isPaidUser = arguments?.getBoolean("isPaidUser") ?: false
         adImageView = view.findViewById(R.id.adImageView)
 
-        if (isPaidUser) {
-            adImageView.visibility = View.GONE
-            return
-        }
-
         lifecycleScope.launch {
-            try {
-                adImageUrls = RetrofitClient.adApi.getAdUrls()
-                showRandomAd() // initial load
+            adImageUrls = RetrofitClient.adApi.getAdUrls()
 
-                // Start loop
+            if (adImageUrls.isNotEmpty()) {
+                showRandomAd()
+
                 adRunnable = object : Runnable {
                     override fun run() {
                         showRandomAd()
@@ -56,10 +50,6 @@ class AdFragment : Fragment() {
                     }
                 }
                 handler.postDelayed(adRunnable, 30_000)
-
-            } catch (e: Exception) {
-                Log.e("AdFragment", "Failed to fetch ads: ${e.message}")
-                adImageView.setImageResource(R.drawable.ic_launcher_foreground)
             }
         }
     }

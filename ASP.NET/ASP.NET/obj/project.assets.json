@@ -850,19 +850,19 @@
     ]
   },
   "packageFolders": {
-    "/Users/beny/.nuget/packages/": {}
+    "/Users/dionis/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/beny/Documents/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
+      "projectUniqueName": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
       "projectName": "ASP.NET",
-      "projectPath": "/Users/beny/Documents/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
-      "packagesPath": "/Users/beny/.nuget/packages/",
-      "outputPath": "/Users/beny/Documents/android-memory-game/ASP.NET/ASP.NET/obj/",
+      "projectPath": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/ASP.NET.csproj",
+      "packagesPath": "/Users/dionis/.nuget/packages/",
+      "outputPath": "/Users/dionis/GDipSA/SA4108/CA/Mobile_CA/android-memory-game/ASP.NET/ASP.NET/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/beny/.nuget/NuGet/NuGet.Config"
+        "/Users/dionis/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"

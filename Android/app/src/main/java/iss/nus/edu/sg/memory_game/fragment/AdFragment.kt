@@ -23,7 +23,7 @@ class AdFragment : Fragment() {
     private lateinit var adImageView: ImageView
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var adRunnable: Runnable
-    private var isPaidUser = false
+
 
     private var adImageUrls: List<String> = emptyList()
 
@@ -37,6 +37,7 @@ class AdFragment : Fragment() {
 
         adImageView = view.findViewById(R.id.adImageView)
 
+        //launching coroutine here cos calling API to retrieve ad images
         lifecycleScope.launch {
             adImageUrls = RetrofitClient.adApi.getAdUrls()
 
@@ -55,9 +56,8 @@ class AdFragment : Fragment() {
     }
 
     private fun showRandomAd() {
-        val isSuccess = Random.nextBoolean()
 
-        if (isSuccess && adImageUrls.isNotEmpty()) {
+        if (adImageUrls.isNotEmpty()) {
             val selectedAdUrl = adImageUrls.random()
 
             Glide.with(requireContext())
@@ -79,7 +79,6 @@ class AdFragment : Fragment() {
         fun newInstance(isPaidUser: Boolean): AdFragment {
             val fragment = AdFragment()
             val args = Bundle()
-            args.putBoolean("isPaidUser", isPaidUser)
             fragment.arguments = args
             return fragment
         }

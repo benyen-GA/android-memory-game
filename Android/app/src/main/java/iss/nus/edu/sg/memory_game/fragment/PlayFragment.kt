@@ -98,7 +98,10 @@ class PlayFragment : Fragment() {
         val loginPrefs = requireActivity().getSharedPreferences("auth", Context.MODE_PRIVATE)
         val isPaidUser = loginPrefs.getBoolean("isPaidUser", false)
         if (!isPaidUser) {
-            childFragmentManager.beginTransaction().replace(R.id.adView, AdFragment()).commit()
+            val adFragment = AdFragment.newInstance(isPaidUser)
+            childFragmentManager.beginTransaction()
+                .replace(R.id.adView, adFragment)
+                .commit()
         } else {
             adView.visibility = View.GONE
         }

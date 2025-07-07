@@ -9,14 +9,44 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3bc2395-96f8-42a5-aadf-93ec79e0a20e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ASP.NET/Controllers/AdController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/apis/AdApi.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ASP.NET/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ASP.NET/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ASP.NET/Controllers/ScoreService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/Controllers/ScoreService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ASP.NET/Models/Score.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/Models/Score.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/ASP.NET.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/ASP.NET.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/ASP.NET.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/ASP.NET.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/ASP.NET.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/ASP.NET.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/ASP.NET.staticwebassets.runtime.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/ASP.NET.staticwebassets.runtime.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/bin/Debug/net8.0/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/ASP.NET.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/ASP.NET.csproj.nuget.dgspec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/ASP.NET.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/ASP.NET.csproj.nuget.g.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.assets.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.csproj.CoreCompileInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.csproj.FileListAbsolute.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.genruntimeconfig.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.genruntimeconfig.cache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ASP.NET.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ref/ASP.NET.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/ref/ASP.NET.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/refint/ASP.NET.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/refint/ASP.NET.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets.build.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets.build.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets.development.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets.development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets.pack.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets.pack.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets/msbuild.ASP.NET.Microsoft.AspNetCore.StaticWebAssets.props" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/Debug/net8.0/staticwebassets/msbuild.ASP.NET.Microsoft.AspNetCore.StaticWebAssets.props" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/project.assets.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/project.packagespec.json" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/project.packagespec.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/rider.project.model.nuget.info" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/rider.project.model.nuget.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASP.NET/obj/rider.project.restore.info" beforeDir="false" afterPath="$PROJECT_DIR$/ASP.NET/obj/rider.project.restore.info" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/../Android/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/fragment/AdFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/fragment/AdFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/fragment/PlayFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../Android/app/src/main/java/iss/nus/edu/sg/memory_game/fragment/PlayFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Android/app/src/main/res/layout/fragment_ad.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Android/app/src/main/res/layout/fragment_ad.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +59,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/ASP.NET/Controllers/AdController.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -38,29 +71,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.ASP.NET: http.executor": "Run",
-    ".NET Launch Settings Profile.http.executor": "Debug",
-    ".NET Launch Settings Profile.https.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "login__branch-(Dionis)",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "editor.preferences.gutterIcons",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.ASP.NET: http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.http.executor&quot;: &quot;Run&quot;,
+    &quot;.NET Launch Settings Profile.https.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.gutterIcons&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.http">
     <configuration name="http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/ASP.NET/ASP.NET.csproj" />
@@ -115,6 +148,7 @@
       <workItem from="1751590113663" duration="3891000" />
       <workItem from="1751616874005" duration="138000" />
       <workItem from="1751620716489" duration="667000" />
+      <workItem from="1751781450820" duration="7539000" />
     </task>
     <servers />
   </component>

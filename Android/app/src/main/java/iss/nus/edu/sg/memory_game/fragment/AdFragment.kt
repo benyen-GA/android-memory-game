@@ -1,5 +1,6 @@
 package iss.nus.edu.sg.memory_game.fragment
 
+
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,23 +8,25 @@ import kotlin.random.Random
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 import androidx.fragment.app.Fragment
 import iss.nus.edu.sg.memory_game.R
 
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import iss.nus.edu.sg.memory_game.apis.RetrofitClient
+import android.util.Log
+
+
 class AdFragment : Fragment() {
-    private lateinit var adTextView: TextView
+    private lateinit var adImageView: ImageView
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var adRunnable: Runnable
-    private val isPaidUser = false
+    private var isPaidUser = false
 
-    val adMessages = listOf(
-        "🎮 Try our new game today!",
-        "🔥 50% off on all features!",
-        "🚀 Upgrade to Premium now!",
-        "🎁 Get daily rewards — Sign up!",
-        "📣 New features rolling out!"
-    )
+    private var adImageUrls: List<String> = emptyList()
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_ad, container, false)
@@ -32,38 +35,53 @@ class AdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adTextView = view.findViewById(R.id.adTextView)
+        adImageView = view.findViewById(R.id.adImageView)
 
-        if(isPaidUser) {
-            adTextView.visibility = View.GONE
-            return
-        }
+        lifecycleScope.launch {
+            adImageUrls = RetrofitClient.adApi.getAdUrls()
 
-        showRandomAd() // initial load
-
-        adRunnable = object : Runnable {
-            override fun run() {
+            if (adImageUrls.isNotEmpty()) {
                 showRandomAd()
-                handler.postDelayed(this, 2_000)
+
+                adRunnable = object : Runnable {
+                    override fun run() {
+                        showRandomAd()
+                        handler.postDelayed(this, 30_000)
+                    }
+                }
+                handler.postDelayed(adRunnable, 30_000)
             }
         }
-
-        handler.postDelayed(adRunnable, 2_000)
     }
 
     private fun showRandomAd() {
         val isSuccess = Random.nextBoolean()
 
-        if (isSuccess) {
-            val selectedAd = adMessages.random()
-            adTextView.text = selectedAd
+        if (isSuccess && adImageUrls.isNotEmpty()) {
+            val selectedAdUrl = adImageUrls.random()
+
+            Glide.with(requireContext())
+                .load(selectedAdUrl)
+                .into(adImageView)
+
         } else {
-            adTextView.text = "Failed to load ad. Please try again."
+            adImageView.setImageResource(R.drawable.ic_launcher_foreground)
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         handler.removeCallbacks(adRunnable)
+    }
+
+    companion object {
+        fun newInstance(isPaidUser: Boolean): AdFragment {
+            val fragment = AdFragment()
+            val args = Bundle()
+            args.putBoolean("isPaidUser", isPaidUser)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
